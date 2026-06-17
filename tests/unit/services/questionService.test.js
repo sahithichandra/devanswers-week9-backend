@@ -138,14 +138,11 @@ describe('questionService', () => {
 
       const mockAnswers = [{ _id: 'answer1', answerText: 'Test Answer' }];
 
-      Question.findById = vi
-        .fn()
-        .mockResolvedValueOnce(mockQuestion)
-        .mockReturnValueOnce({
-          populate: vi.fn().mockReturnValue({
-            populate: vi.fn().mockResolvedValue(mockPopulatedQuestion),
-          }),
-        });
+      Question.findByIdAndUpdate = vi.fn().mockReturnValue({
+        populate: vi.fn().mockReturnValue({
+          populate: vi.fn().mockResolvedValue(mockPopulatedQuestion),
+        }),
+      });
 
       Answer.find = vi.fn().mockReturnValue({
         populate: vi.fn().mockResolvedValue(mockAnswers),
@@ -155,51 +152,53 @@ describe('questionService', () => {
       const result = await getQuestionByIdService('question123');
 
       // Assert
-      expect(Question.findById).toHaveBeenCalledWith('question123');
-      expect(mockQuestion.save).toHaveBeenCalled();
+      expect(Question.findByIdAndUpdate).toHaveBeenCalledWith(
+        'question123',
+        { $inc: { views: 1 } },
+        { new: true }
+      );
       expect(result.answers).toEqual(mockAnswers);
     });
 
     // Edge case - view increment
     it('should increment views count', async () => {
       // Arrange
-      const mockQuestion = {
-        _id: 'question123',
-        views: 5,
-        save: vi.fn().mockResolvedValue(true),
-      };
-
       const mockPopulated = {
         _id: 'question123',
         views: 6,
         toObject: vi.fn().mockReturnValue({ _id: 'question123', views: 6 }),
       };
 
-      Question.findById = vi
-        .fn()
-        .mockResolvedValueOnce(mockQuestion)
-        .mockReturnValueOnce({
-          populate: vi.fn().mockReturnValue({
-            populate: vi.fn().mockResolvedValue(mockPopulated),
-          }),
-        });
+      Question.findByIdAndUpdate = vi.fn().mockReturnValue({
+        populate: vi.fn().mockReturnValue({
+          populate: vi.fn().mockResolvedValue(mockPopulated),
+        }),
+      });
 
       Answer.find = vi.fn().mockReturnValue({
         populate: vi.fn().mockResolvedValue([]),
       });
 
       // Act
-      await getQuestionByIdService('question123');
+      const result = await getQuestionByIdService('question123');
 
       // Assert
-      expect(mockQuestion.views).toBe(6);
-      expect(mockQuestion.save).toHaveBeenCalled();
+      expect(Question.findByIdAndUpdate).toHaveBeenCalledWith(
+        'question123',
+        { $inc: { views: 1 } },
+        { new: true }
+      );
+      expect(result.views).toBe(6);
     });
 
     // Error case - question not found
     it('should throw 404 error if question not found', async () => {
       // Arrange
-      Question.findById = vi.fn().mockResolvedValue(null);
+      Question.findByIdAndUpdate = vi.fn().mockReturnValue({
+        populate: vi.fn().mockReturnValue({
+          populate: vi.fn().mockResolvedValue(null),
+        }),
+      });
 
       // Act & Assert
       await expect(getQuestionByIdService('nonexistent')).rejects.toThrow('Question not found');
@@ -211,24 +210,15 @@ describe('questionService', () => {
     // Error case - question disappears after view increment
     it('should throw 404 error if question not found after view increment', async () => {
       // Arrange
-      const mockQuestion = {
-        _id: 'question123',
-        views: 0,
-        save: vi.fn().mockResolvedValue(true),
-      };
-
-      Question.findById = vi
-        .fn()
-        .mockResolvedValueOnce(mockQuestion)
-        .mockReturnValueOnce({
-          populate: vi.fn().mockReturnValue({
-            populate: vi.fn().mockResolvedValue(null),
-          }),
-        });
+      Question.findByIdAndUpdate = vi.fn().mockReturnValue({
+        populate: vi.fn().mockReturnValue({
+          populate: vi.fn().mockResolvedValue(null),
+        }),
+      });
 
       // Act & Assert
+      await expect(getQuestionByIdService('question123')).rejects.toThrow('Question not found');
       await expect(getQuestionByIdService('question123')).rejects.toMatchObject({
-        message: 'Question not found after view increment',
         statusCode: 404,
       });
     });
@@ -236,7 +226,11 @@ describe('questionService', () => {
     // Failure case - database error
     it('should propagate database errors', async () => {
       // Arrange
-      Question.findById = vi.fn().mockRejectedValue(new Error('Database error'));
+      Question.findByIdAndUpdate = vi.fn().mockReturnValue({
+        populate: vi.fn().mockReturnValue({
+          populate: vi.fn().mockRejectedValue(new Error('Database error')),
+        }),
+      });
 
       // Act & Assert
       await expect(getQuestionByIdService('question123')).rejects.toThrow('Database error');

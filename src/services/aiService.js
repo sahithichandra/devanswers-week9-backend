@@ -24,7 +24,7 @@ Return ONLY a valid JSON object with no markdown or code blocks, using this exac
 }`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3.5-flash',
+    model: 'gemini-2.5-flash',
     contents: prompt,
   });
 
@@ -54,7 +54,7 @@ ${answerTexts}
 Write a concise plain-text summary of these answers in 3-5 sentences. Focus on the key solutions and points. Use plain text only — no markdown, no asterisks, no bullet points, no bold, no italics, no special characters.`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3.5-flash',
+    model: 'gemini-2.5-flash',
     contents: prompt,
   });
 

@@ -32,17 +32,21 @@ export const createAnswer = async (req, res) => {
   });
 };
 
-export const updateAnswer = async (req, res) => {
-  const { answerId } = req.params;
-  const { answerText } = req.body;
+export const updateAnswer = async (req, res, next) => {
+  try {
+    const { answerId } = req.params;
+    const { answerText } = req.body;
 
-  const updatedAnswer = await updateAnswerService(answerId, answerText, req.user);
+    const updatedAnswer = await updateAnswerService(answerId, answerText, req.user);
 
-  res.status(200).json({
-    success: true,
-    message: 'Answer updated successfully',
-    data: updatedAnswer,
-  });
+    res.status(200).json({
+      success: true,
+      message: 'Answer updated successfully',
+      data: updatedAnswer,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteAnswer = async (req, res) => {

@@ -156,8 +156,13 @@ describe('answerController', () => {
       error.statusCode = 404;
       answerService.updateAnswerService = vi.fn().mockRejectedValue(error);
 
-      // Act & Assert
-      await expect(updateAnswer(req, res)).rejects.toThrow('Answer not found');
+      const next = vi.fn();
+
+      // Act
+      await updateAnswer(req, res, next);
+
+      // Assert
+      expect(next).toHaveBeenCalledWith(error);
     });
   });
 
