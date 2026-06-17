@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 
 export const improveQuestionService = async ({ title, description, tags }) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({});
   const prompt = `You are helping a developer improve their question on a Q&A platform called DevAnswers.
 
 Given the following question details:
@@ -24,7 +24,7 @@ Return ONLY a valid JSON object with no markdown or code blocks, using this exac
 }`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3.5-flash',
     contents: prompt,
   });
 
@@ -41,7 +41,7 @@ Return ONLY a valid JSON object with no markdown or code blocks, using this exac
 };
 
 export const summarizeAnswersService = async ({ questionText, answers }) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({});
   const answerTexts = answers.map((a, i) => `Answer ${i + 1}: ${a}`).join('\n\n');
 
   const prompt = `You are a helpful assistant on a developer Q&A platform.
@@ -54,7 +54,7 @@ ${answerTexts}
 Write a concise plain-text summary of these answers in 3-5 sentences. Focus on the key solutions and points. Use plain text only — no markdown, no asterisks, no bullet points, no bold, no italics, no special characters.`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3.5-flash',
     contents: prompt,
   });
 
