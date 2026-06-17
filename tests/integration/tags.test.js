@@ -161,9 +161,9 @@ describe('Tags API', () => {
     // Arrange
     const tag = await createTag('sorting');
     await createQuestion({ tags: [tag._id], title: 'First' });
-    await new Promise(resolve => setTimeout(resolve, 10)); // Small delay to ensure different timestamps
+    await new Promise((resolve) => setTimeout(resolve, 10)); // Small delay to ensure different timestamps
     await createQuestion({ tags: [tag._id], title: 'Second' });
-    await new Promise(resolve => setTimeout(resolve, 10)); // Small delay to ensure different timestamps
+    await new Promise((resolve) => setTimeout(resolve, 10)); // Small delay to ensure different timestamps
     await createQuestion({ tags: [tag._id], title: 'Third' });
 
     // Act

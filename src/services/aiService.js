@@ -1,11 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 
 // Models tried in order when one is unavailable or rate-limited
-const MODEL_FALLBACK_CHAIN = [
-  'gemini-2.5-flash-lite',
-  'gemini-2.0-flash-lite',
-  'gemini-2.0-flash',
-];
+const MODEL_FALLBACK_CHAIN = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-2.0-flash'];
 
 const RETRIABLE_MESSAGES = ['429', '503', 'quota', 'rate', 'unavailable', 'overloaded'];
 
@@ -42,7 +38,6 @@ const generateWithFallback = async (prompt) => {
     } catch (err) {
       lastErr = err;
       if (!isRetriable(err)) throw err; // non-retriable (e.g. auth) — stop immediately
-
     }
   }
   throw lastErr;
