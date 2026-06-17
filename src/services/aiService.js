@@ -9,7 +9,10 @@ Title: ${title}
 Description: ${description}
 Tags: ${tags}
 
-Improve each field to make the question clearer, more specific, and more likely to receive helpful answers.
+Improve each field to make the question clearer, more specific, and more likely to receive helpful answers. Follow these rules:
+- Title: must remain phrased as a question (start with "How", "Why", "What", "When", "Can", etc. and end with "?"). Do NOT turn it into a statement or article-style heading.
+- Description: keep it as a first-person problem description, not a solution or answer.
+- Tags: comma-separated relevant keywords only.
 
 IMPORTANT: Do not use any markdown formatting, asterisks, bold, italics, bullet points, or special characters in the text values. Plain text only.
 
