@@ -1,7 +1,54 @@
 import { GoogleGenAI } from '@google/genai';
 
-export const improveQuestionService = async ({ title, description, tags }) => {
+// Models tried in order when one is unavailable or rate-limited
+const MODEL_FALLBACK_CHAIN = [
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash-lite',
+  'gemini-2.0-flash',
+];
+
+const RETRIABLE_MESSAGES = ['429', '503', 'quota', 'rate', 'unavailable', 'overloaded'];
+
+const isRetriable = (error) => {
+  const msg = (error?.message || '').toLowerCase();
+  return RETRIABLE_MESSAGES.some((keyword) => msg.includes(keyword));
+};
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Try a single model with up to 2 retries (exponential backoff: 1s, 2s)
+const tryModel = async (ai, model, prompt) => {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await ai.models.generateContent({ model, contents: prompt });
+      const rawText = response.text;
+      if (!rawText) throw new Error('AI returned an empty response.');
+      return rawText;
+    } catch (err) {
+      const isLast = attempt === 2;
+      if (!isRetriable(err) || isLast) throw err;
+      await sleep(1000 * (attempt + 1));
+    }
+  }
+};
+
+// Walk the fallback chain until one model succeeds
+const generateWithFallback = async (prompt) => {
   const ai = new GoogleGenAI({});
+  let lastErr;
+  for (const model of MODEL_FALLBACK_CHAIN) {
+    try {
+      return await tryModel(ai, model, prompt);
+    } catch (err) {
+      lastErr = err;
+      if (!isRetriable(err)) throw err; // non-retriable (e.g. auth) — stop immediately
+
+    }
+  }
+  throw lastErr;
+};
+
+export const improveQuestionService = async ({ title, description, tags }) => {
   const prompt = `You are helping a developer improve their question on a Q&A platform called DevAnswers.
 
 Given the following question details:
@@ -23,12 +70,8 @@ Return ONLY a valid JSON object with no markdown or code blocks, using this exac
   "tags": "improved, tags, here"
 }`;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-  });
-
-  const text = response.text
+  const rawText = await generateWithFallback(prompt);
+  const text = rawText
     .trim()
     .replace(/^```(?:json)?\n?/, '')
     .replace(/\n?```$/, '')
@@ -41,7 +84,6 @@ Return ONLY a valid JSON object with no markdown or code blocks, using this exac
 };
 
 export const summarizeAnswersService = async ({ questionText, answers }) => {
-  const ai = new GoogleGenAI({});
   const answerTexts = answers.map((a, i) => `Answer ${i + 1}: ${a}`).join('\n\n');
 
   const prompt = `You are a helpful assistant on a developer Q&A platform.
@@ -53,10 +95,6 @@ ${answerTexts}
 
 Write a concise plain-text summary of these answers in 3-5 sentences. Focus on the key solutions and points. Use plain text only — no markdown, no asterisks, no bullet points, no bold, no italics, no special characters.`;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-  });
-
-  return response.text.trim().replace(/\*+/g, '');
+  const rawText = await generateWithFallback(prompt);
+  return rawText.trim().replace(/\*+/g, '');
 };

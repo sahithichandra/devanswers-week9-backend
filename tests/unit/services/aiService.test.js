@@ -57,7 +57,7 @@ describe('aiService', () => {
 
       // Assert
       expect(mockGenerateContent).toHaveBeenCalledWith(
-        expect.objectContaining({ model: 'gemini-2.5-flash' })
+        expect.objectContaining({ model: 'gemini-2.5-flash-lite' })
       );
       expect(result).toEqual(responseJson);
     });
@@ -135,8 +135,8 @@ describe('aiService', () => {
       expect(result).toEqual(responseJson);
     });
 
-    // Failure case - generateContent throws
-    it('should propagate error from generateContent', async () => {
+    // Failure case - non-retriable error propagates immediately
+    it('should propagate non-retriable error from generateContent', async () => {
       // Arrange
       const input = {
         title: 'My question',
@@ -148,6 +148,34 @@ describe('aiService', () => {
 
       // Act & Assert
       await expect(improveQuestionService(input)).rejects.toThrow('Gemini API error');
+    });
+
+    // Fallback chain: rate-limit on primary triggers fallback model
+    it('should fall back to next model on retriable 429 error', async () => {
+      vi.useFakeTimers();
+
+      // Arrange
+      const input = { title: 'test', description: 'test', tags: 'test' };
+      const responseJson = { title: 'Improved', description: 'Improved desc', tags: 'tag' };
+      const rateLimitErr = new Error('429 quota exceeded');
+
+      // First three calls (primary model, 3 attempts) fail with 429; 4th (fallback model) succeeds
+      mockGenerateContent
+        .mockRejectedValueOnce(rateLimitErr)
+        .mockRejectedValueOnce(rateLimitErr)
+        .mockRejectedValueOnce(rateLimitErr)
+        .mockResolvedValue({ text: JSON.stringify(responseJson) });
+
+      // Act — advance timers concurrently to skip sleep() delays
+      const resultPromise = improveQuestionService(input);
+      await vi.runAllTimersAsync();
+      const result = await resultPromise;
+
+      vi.useRealTimers();
+
+      // Assert — eventually succeeded via fallback model
+      expect(result).toEqual(responseJson);
+      expect(mockGenerateContent).toHaveBeenCalledTimes(4);
     });
   });
 
@@ -171,7 +199,7 @@ describe('aiService', () => {
 
       // Assert
       expect(mockGenerateContent).toHaveBeenCalledWith(
-        expect.objectContaining({ model: 'gemini-2.5-flash' })
+        expect.objectContaining({ model: 'gemini-2.5-flash-lite' })
       );
       expect(result).toBe('Async/await allows writing asynchronous code in a synchronous style.');
     });

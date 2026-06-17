@@ -6,7 +6,7 @@ import * as aiService from '../../../src/services/aiService.js';
 vi.mock('../../../src/services/aiService.js');
 
 describe('aiController', () => {
-  let req, res;
+  let req, res, next;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -21,6 +21,8 @@ describe('aiController', () => {
       status: vi.fn().mockReturnThis(),
       json: vi.fn().mockReturnThis(),
     };
+
+    next = vi.fn();
   });
 
   describe('improveQuestion', () => {
@@ -42,7 +44,7 @@ describe('aiController', () => {
       aiService.improveQuestionService = vi.fn().mockResolvedValue(mockImproved);
 
       // Act
-      await improveQuestion(req, res);
+      await improveQuestion(req, res, next);
 
       // Assert
       expect(aiService.improveQuestionService).toHaveBeenCalledWith({
@@ -58,17 +60,20 @@ describe('aiController', () => {
       });
     });
 
-    // Failure case - service error propagates
-    it('should propagate service errors', async () => {
+    // Failure case - service error is forwarded to next()
+    it('should call next with error when service throws', async () => {
       // Arrange
       req.body = { title: 'My question', description: 'Details', tags: 'js' };
+      const serviceError = new Error('AI service unavailable');
 
-      aiService.improveQuestionService = vi
-        .fn()
-        .mockRejectedValue(new Error('AI service unavailable'));
+      aiService.improveQuestionService = vi.fn().mockRejectedValue(serviceError);
 
-      // Act & Assert
-      await expect(improveQuestion(req, res)).rejects.toThrow('AI service unavailable');
+      // Act
+      await improveQuestion(req, res, next);
+
+      // Assert
+      expect(next).toHaveBeenCalledWith(serviceError);
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 
@@ -90,7 +95,7 @@ describe('aiController', () => {
       aiService.summarizeAnswersService = vi.fn().mockResolvedValue(mockSummary);
 
       // Act
-      await summarizeAnswers(req, res);
+      await summarizeAnswers(req, res, next);
 
       // Assert
       expect(aiService.summarizeAnswersService).toHaveBeenCalledWith({
@@ -105,20 +110,23 @@ describe('aiController', () => {
       });
     });
 
-    // Failure case - service error propagates
-    it('should propagate service errors', async () => {
+    // Failure case - service error is forwarded to next()
+    it('should call next with error when service throws', async () => {
       // Arrange
       req.body = {
         questionText: 'What is Node.js?',
         answers: ['A runtime environment for JavaScript.'],
       };
+      const serviceError = new Error('AI service unavailable');
 
-      aiService.summarizeAnswersService = vi
-        .fn()
-        .mockRejectedValue(new Error('AI service unavailable'));
+      aiService.summarizeAnswersService = vi.fn().mockRejectedValue(serviceError);
 
-      // Act & Assert
-      await expect(summarizeAnswers(req, res)).rejects.toThrow('AI service unavailable');
+      // Act
+      await summarizeAnswers(req, res, next);
+
+      // Assert
+      expect(next).toHaveBeenCalledWith(serviceError);
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 });
