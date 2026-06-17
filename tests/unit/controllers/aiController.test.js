@@ -63,9 +63,9 @@ describe('aiController', () => {
       // Arrange
       req.body = { title: 'My question', description: 'Details', tags: 'js' };
 
-      aiService.improveQuestionService = vi.fn().mockRejectedValue(
-        new Error('AI service unavailable')
-      );
+      aiService.improveQuestionService = vi
+        .fn()
+        .mockRejectedValue(new Error('AI service unavailable'));
 
       // Act & Assert
       await expect(improveQuestion(req, res)).rejects.toThrow('AI service unavailable');
@@ -83,7 +83,8 @@ describe('aiController', () => {
           'Async/await is syntactic sugar over Promises.',
         ],
       };
-      const mockSummary = 'Async/await allows you to write asynchronous code in a synchronous style.';
+      const mockSummary =
+        'Async/await allows you to write asynchronous code in a synchronous style.';
 
       req.body = bodyData;
       aiService.summarizeAnswersService = vi.fn().mockResolvedValue(mockSummary);
@@ -112,9 +113,9 @@ describe('aiController', () => {
         answers: ['A runtime environment for JavaScript.'],
       };
 
-      aiService.summarizeAnswersService = vi.fn().mockRejectedValue(
-        new Error('AI service unavailable')
-      );
+      aiService.summarizeAnswersService = vi
+        .fn()
+        .mockRejectedValue(new Error('AI service unavailable'));
 
       // Act & Assert
       await expect(summarizeAnswers(req, res)).rejects.toThrow('AI service unavailable');

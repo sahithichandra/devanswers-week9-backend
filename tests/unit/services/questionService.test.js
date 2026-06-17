@@ -136,11 +136,10 @@ describe('questionService', () => {
         }),
       };
 
-      const mockAnswers = [
-        { _id: 'answer1', answerText: 'Test Answer' },
-      ];
+      const mockAnswers = [{ _id: 'answer1', answerText: 'Test Answer' }];
 
-      Question.findById = vi.fn()
+      Question.findById = vi
+        .fn()
         .mockResolvedValueOnce(mockQuestion)
         .mockReturnValueOnce({
           populate: vi.fn().mockReturnValue({
@@ -176,7 +175,8 @@ describe('questionService', () => {
         toObject: vi.fn().mockReturnValue({ _id: 'question123', views: 6 }),
       };
 
-      Question.findById = vi.fn()
+      Question.findById = vi
+        .fn()
         .mockResolvedValueOnce(mockQuestion)
         .mockReturnValueOnce({
           populate: vi.fn().mockReturnValue({
@@ -217,7 +217,8 @@ describe('questionService', () => {
         save: vi.fn().mockResolvedValue(true),
       };
 
-      Question.findById = vi.fn()
+      Question.findById = vi
+        .fn()
         .mockResolvedValueOnce(mockQuestion)
         .mockReturnValueOnce({
           populate: vi.fn().mockReturnValue({
@@ -281,9 +282,7 @@ describe('questionService', () => {
     it('should reuse existing tags', async () => {
       // Arrange
       const existingTag = { _id: 'existingTag123', name: 'javascript' };
-      Tag.findOne = vi.fn()
-        .mockResolvedValueOnce(existingTag)
-        .mockResolvedValueOnce(null);
+      Tag.findOne = vi.fn().mockResolvedValueOnce(existingTag).mockResolvedValueOnce(null);
 
       const mockNewTag = {
         _id: 'newTag123',
@@ -483,12 +482,12 @@ describe('questionService', () => {
       const loggedInUser = { id: 'otherUser789', isAdmin: false };
 
       // Act & Assert
-      await expect(
-        deleteQuestionService('question123', loggedInUser)
-      ).rejects.toThrow('Not authorized to delete this question');
-      await expect(
-        deleteQuestionService('question123', loggedInUser)
-      ).rejects.toMatchObject({ statusCode: 403 });
+      await expect(deleteQuestionService('question123', loggedInUser)).rejects.toThrow(
+        'Not authorized to delete this question'
+      );
+      await expect(deleteQuestionService('question123', loggedInUser)).rejects.toMatchObject({
+        statusCode: 403,
+      });
     });
 
     // Error case - question not found
@@ -550,9 +549,9 @@ describe('questionService', () => {
       handleVote.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        upvoteQuestionService('questionId', 'user123')
-      ).rejects.toThrow('Failed to upvote question');
+      await expect(upvoteQuestionService('questionId', 'user123')).rejects.toThrow(
+        'Failed to upvote question'
+      );
     });
   });
 
@@ -581,9 +580,9 @@ describe('questionService', () => {
       handleVote.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        downvoteQuestionService('questionId', 'user123')
-      ).rejects.toThrow('Failed to downvote question');
+      await expect(downvoteQuestionService('questionId', 'user123')).rejects.toThrow(
+        'Failed to downvote question'
+      );
     });
   });
 });

@@ -65,12 +65,12 @@ describe('answerService', () => {
       });
 
       // Act & Assert
-      await expect(
-        getAnswersByQuestionIdService('question123')
-      ).rejects.toThrow('No answers found for this question');
-      await expect(
-        getAnswersByQuestionIdService('question123')
-      ).rejects.toMatchObject({ statusCode: 404 });
+      await expect(getAnswersByQuestionIdService('question123')).rejects.toThrow(
+        'No answers found for this question'
+      );
+      await expect(getAnswersByQuestionIdService('question123')).rejects.toMatchObject({
+        statusCode: 404,
+      });
     });
 
     // Failure case - database error
@@ -81,9 +81,7 @@ describe('answerService', () => {
       });
 
       // Act & Assert
-      await expect(
-        getAnswersByQuestionIdService('question123')
-      ).rejects.toThrow('Database error');
+      await expect(getAnswersByQuestionIdService('question123')).rejects.toThrow('Database error');
     });
   });
 
@@ -182,7 +180,8 @@ describe('answerService', () => {
         author: { _id: 'user123', name: 'Test User' },
       };
 
-      Answer.findById = vi.fn()
+      Answer.findById = vi
+        .fn()
         .mockResolvedValueOnce(mockAnswer)
         .mockReturnValueOnce({
           populate: vi.fn().mockResolvedValue(mockPopulatedAnswer),
@@ -225,9 +224,9 @@ describe('answerService', () => {
       Answer.findById = vi.fn().mockResolvedValue(mockAnswer);
 
       // Act & Assert
-      await expect(
-        updateAnswerService('answer123', 'Hacked text', loggedInUser)
-      ).rejects.toThrow('Not authorized to update this answer');
+      await expect(updateAnswerService('answer123', 'Hacked text', loggedInUser)).rejects.toThrow(
+        'Not authorized to update this answer'
+      );
       await expect(
         updateAnswerService('answer123', 'Hacked text', loggedInUser)
       ).rejects.toMatchObject({ statusCode: 403 });
@@ -263,12 +262,12 @@ describe('answerService', () => {
       Answer.findById = vi.fn().mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        deleteAnswerService('nonexistent', loggedInUser)
-      ).rejects.toThrow('Answer not found');
-      await expect(
-        deleteAnswerService('nonexistent', loggedInUser)
-      ).rejects.toMatchObject({ statusCode: 404 });
+      await expect(deleteAnswerService('nonexistent', loggedInUser)).rejects.toThrow(
+        'Answer not found'
+      );
+      await expect(deleteAnswerService('nonexistent', loggedInUser)).rejects.toMatchObject({
+        statusCode: 404,
+      });
     });
 
     // Authorization case - not author or admin
@@ -283,12 +282,12 @@ describe('answerService', () => {
       Answer.findById = vi.fn().mockResolvedValue(mockAnswer);
 
       // Act & Assert
-      await expect(
-        deleteAnswerService('answer123', loggedInUser)
-      ).rejects.toThrow('Not authorized to delete this answer');
-      await expect(
-        deleteAnswerService('answer123', loggedInUser)
-      ).rejects.toMatchObject({ statusCode: 403 });
+      await expect(deleteAnswerService('answer123', loggedInUser)).rejects.toThrow(
+        'Not authorized to delete this answer'
+      );
+      await expect(deleteAnswerService('answer123', loggedInUser)).rejects.toMatchObject({
+        statusCode: 403,
+      });
     });
   });
 
@@ -318,9 +317,9 @@ describe('answerService', () => {
       handleVote.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        upvoteAnswerService('answer123', 'user123')
-      ).rejects.toThrow('Failed to upvote answer');
+      await expect(upvoteAnswerService('answer123', 'user123')).rejects.toThrow(
+        'Failed to upvote answer'
+      );
     });
   });
 
@@ -350,9 +349,9 @@ describe('answerService', () => {
       handleVote.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        downvoteAnswerService('answer123', 'user123')
-      ).rejects.toThrow('Failed to downvote answer');
+      await expect(downvoteAnswerService('answer123', 'user123')).rejects.toThrow(
+        'Failed to downvote answer'
+      );
     });
   });
 });

@@ -1,9 +1,6 @@
-import {
-  register as registerUser,
-  login as loginUser
-} from '../services/userService.js';
+import { register as registerUser, login as loginUser } from '../services/userService.js';
 
-export const register = async (req, res, next) => {
+export const register = async (req, res, _next) => {
   const { name, email, password, isAdmin } = req.body;
   const user = await registerUser(name, email, password, isAdmin);
 
@@ -14,17 +11,17 @@ export const register = async (req, res, next) => {
   });
 };
 
-export const login = async (req, res, next) => {
+export const login = async (req, res, _next) => {
   const { email, password } = req.body;
-  const { token, userId, name } = await loginUser(email, password); 
+  const { token, userId, name } = await loginUser(email, password);
 
   res.status(200).json({
     success: true,
-    message: "Login Successful",
+    message: 'Login Successful',
     data: {
       token,
       userId,
-      name
-    }
+      name,
+    },
   });
 };

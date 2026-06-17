@@ -25,7 +25,11 @@ Return ONLY a valid JSON object with no markdown or code blocks, using this exac
     contents: prompt,
   });
 
-  const text = response.text.trim().replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+  const text = response.text
+    .trim()
+    .replace(/^```(?:json)?\n?/, '')
+    .replace(/\n?```$/, '')
+    .trim();
   const parsed = JSON.parse(text);
   parsed.title = parsed.title?.replace(/\*+/g, '');
   parsed.description = parsed.description?.replace(/\*+/g, '');

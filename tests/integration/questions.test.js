@@ -17,20 +17,16 @@ beforeAll(async () => {
 
 async function createUserAndLogin() {
   const email = `testuser+${Date.now()}@example.com`;
-  const password = "password123";
+  const password = 'password123';
 
-  const userRes = await request(app)
-    .post("/api/auth/register")
-    .send({
-      name: "Test User",
-      email,
-      password,
-      isAdmin: false,
-    });
+  const userRes = await request(app).post('/api/auth/register').send({
+    name: 'Test User',
+    email,
+    password,
+    isAdmin: false,
+  });
 
-  const loginRes = await request(app)
-    .post("/api/auth/login")
-    .send({ email, password });
+  const loginRes = await request(app).post('/api/auth/login').send({ email, password });
 
   return {
     mockUser: userRes.body.data,
@@ -215,8 +211,8 @@ describe('Questions API', () => {
     expect(response.status).toBe(201);
     const savedQuestion = await Question.findById(response.body.data._id).populate('tags');
     expect(savedQuestion.tags).toHaveLength(2);
-    expect(savedQuestion.tags.some(tag => tag.name === 'javascript')).toBe(true);
-    expect(savedQuestion.tags.some(tag => tag.name === 'new-tag')).toBe(true);
+    expect(savedQuestion.tags.some((tag) => tag.name === 'javascript')).toBe(true);
+    expect(savedQuestion.tags.some((tag) => tag.name === 'new-tag')).toBe(true);
   });
 
   it('POST /api/questions -> should return 401 without authentication token', async () => {
@@ -227,9 +223,7 @@ describe('Questions API', () => {
       author: new mongoose.Types.ObjectId(),
     };
 
-    const response = await request(app)
-      .post('/api/questions')
-      .send(questionData);
+    const response = await request(app).post('/api/questions').send(questionData);
 
     expect(response.status).toBe(401);
     expect(response.body.success).toBe(false);
@@ -313,8 +307,12 @@ describe('Questions API', () => {
 
   it('PUT /api/questions/:id -> should return 403 when user is not the author or admin', async () => {
     const otherEmail = `other+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
-    const otherLogin = await request(app).post('/api/auth/login').send({ email: otherEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
+    const otherLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: otherEmail, password: 'password123' });
     const otherToken = otherLogin.body.data.token;
 
     const question = await createQuestion({ author: mockUser._id });
@@ -331,8 +329,12 @@ describe('Questions API', () => {
 
   it('PUT /api/questions/:id -> should allow an admin to update any question', async () => {
     const adminEmail = `admin+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
-    const adminLogin = await request(app).post('/api/auth/login').send({ email: adminEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
+    const adminLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: adminEmail, password: 'password123' });
     const adminToken = adminLogin.body.data.token;
 
     const question = await createQuestion({ author: mockUser._id });
@@ -367,8 +369,12 @@ describe('Questions API', () => {
 
   it('DELETE /api/questions/:id -> should delete a question when user is an admin', async () => {
     const adminEmail = `admin+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
-    const adminLogin = await request(app).post('/api/auth/login').send({ email: adminEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
+    const adminLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: adminEmail, password: 'password123' });
     const adminToken = adminLogin.body.data.token;
 
     const question = await createQuestion({ author: mockUser._id });
@@ -386,8 +392,12 @@ describe('Questions API', () => {
 
   it('DELETE /api/questions/:id -> should return 403 when user is not the author or admin', async () => {
     const otherEmail = `other+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
-    const otherLogin = await request(app).post('/api/auth/login').send({ email: otherEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
+    const otherLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: otherEmail, password: 'password123' });
     const otherToken = otherLogin.body.data.token;
 
     const question = await createQuestion({ author: mockUser._id });
@@ -416,8 +426,7 @@ describe('Questions API', () => {
   it('DELETE /api/questions/:id -> should return 401 without authentication', async () => {
     const question = await createQuestion();
 
-    const response = await request(app)
-      .delete(`/api/questions/${question._id}`);
+    const response = await request(app).delete(`/api/questions/${question._id}`);
 
     expect(response.status).toBe(401);
     expect(response.body.success).toBe(false);
@@ -555,18 +564,45 @@ describe('Questions API', () => {
   it('POST /api/questions/:id/downvote -> should calculate correct vote count with multiple votes', async () => {
     const ts = Date.now();
 
-    await request(app).post('/api/auth/register').send({ name: 'User 1', email: `u1+${ts}@example.com`, password: 'password123', isAdmin: false });
-    const login1 = await request(app).post('/api/auth/login').send({ email: `u1+${ts}@example.com`, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({
+        name: 'User 1',
+        email: `u1+${ts}@example.com`,
+        password: 'password123',
+        isAdmin: false,
+      });
+    const login1 = await request(app)
+      .post('/api/auth/login')
+      .send({ email: `u1+${ts}@example.com`, password: 'password123' });
     const token1 = login1.body.data.token;
     const userId1 = login1.body.data.userId;
 
-    await request(app).post('/api/auth/register').send({ name: 'User 2', email: `u2+${ts}@example.com`, password: 'password123', isAdmin: false });
-    const login2 = await request(app).post('/api/auth/login').send({ email: `u2+${ts}@example.com`, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({
+        name: 'User 2',
+        email: `u2+${ts}@example.com`,
+        password: 'password123',
+        isAdmin: false,
+      });
+    const login2 = await request(app)
+      .post('/api/auth/login')
+      .send({ email: `u2+${ts}@example.com`, password: 'password123' });
     const token2 = login2.body.data.token;
     const userId2 = login2.body.data.userId;
 
-    await request(app).post('/api/auth/register').send({ name: 'User 3', email: `u3+${ts}@example.com`, password: 'password123', isAdmin: false });
-    const login3 = await request(app).post('/api/auth/login').send({ email: `u3+${ts}@example.com`, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({
+        name: 'User 3',
+        email: `u3+${ts}@example.com`,
+        password: 'password123',
+        isAdmin: false,
+      });
+    const login3 = await request(app)
+      .post('/api/auth/login')
+      .send({ email: `u3+${ts}@example.com`, password: 'password123' });
     const token3 = login3.body.data.token;
     const userId3 = login3.body.data.userId;
 

@@ -18,20 +18,16 @@ beforeAll(async () => {
 
 async function createUserAndLogin() {
   const email = `testuser+${Date.now()}@example.com`;
-  const password = "password123";
+  const password = 'password123';
 
-  const userRes = await request(app)
-    .post("/api/auth/register")
-    .send({
-      name: "Test User",
-      email,
-      password,
-      isAdmin: false,
-    });
+  const userRes = await request(app).post('/api/auth/register').send({
+    name: 'Test User',
+    email,
+    password,
+    isAdmin: false,
+  });
 
-  const loginRes = await request(app)
-    .post("/api/auth/login")
-    .send({ email, password });
+  const loginRes = await request(app).post('/api/auth/login').send({ email, password });
 
   return {
     mockUser: userRes.body.data,
@@ -63,7 +59,7 @@ async function createQuestion(questionData = {}) {
 
 async function createAnswer(answerData = {}) {
   const author = answerData.author || mockUser._id;
-  const question = answerData.question || await createQuestion();
+  const question = answerData.question || (await createQuestion());
 
   const defaultData = {
     questionId: question._id,
@@ -92,8 +88,7 @@ describe('Answers API', () => {
     await createAnswer({ question: question, answerText: 'Answer 1' });
     await createAnswer({ question: question, answerText: 'Answer 2' });
 
-    const response = await request(app)
-      .get(`/api/answers/question/${question._id}`);
+    const response = await request(app).get(`/api/answers/question/${question._id}`);
 
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
@@ -105,8 +100,7 @@ describe('Answers API', () => {
   it('GET /api/answers/question/:questionId -> should return 404 when no answers exist for a question', async () => {
     const question = await createQuestion();
 
-    const response = await request(app)
-      .get(`/api/answers/question/${question._id}`);
+    const response = await request(app).get(`/api/answers/question/${question._id}`);
 
     expect(response.status).toBe(404);
     expect(response.body.success).toBe(false);
@@ -120,8 +114,7 @@ describe('Answers API', () => {
     await createAnswer({ question: question1, answerText: 'Answer for Q1' });
     await createAnswer({ question: question2, answerText: 'Answer for Q2' });
 
-    const response = await request(app)
-      .get(`/api/answers/question/${question1._id}`);
+    const response = await request(app).get(`/api/answers/question/${question1._id}`);
 
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveLength(1);
@@ -239,8 +232,12 @@ describe('Answers API', () => {
 
   it('PUT /api/answers/:answerId -> should return 403 when user is not the author or admin', async () => {
     const otherEmail = `other+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
-    const otherLogin = await request(app).post('/api/auth/login').send({ email: otherEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
+    const otherLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: otherEmail, password: 'password123' });
     const otherToken = otherLogin.body.data.token;
 
     const answer = await createAnswer({ author: mockUser._id });
@@ -257,8 +254,12 @@ describe('Answers API', () => {
 
   it('PUT /api/answers/:answerId -> should allow an admin to update any answer', async () => {
     const adminEmail = `admin+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
-    const adminLogin = await request(app).post('/api/auth/login').send({ email: adminEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
+    const adminLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: adminEmail, password: 'password123' });
     const adminToken = adminLogin.body.data.token;
 
     const answer = await createAnswer({ author: mockUser._id });
@@ -306,8 +307,7 @@ describe('Answers API', () => {
   it('DELETE /api/answers/:answerId -> should return 401 without authentication', async () => {
     const answer = await createAnswer();
 
-    const response = await request(app)
-      .delete(`/api/answers/${answer._id}`);
+    const response = await request(app).delete(`/api/answers/${answer._id}`);
 
     expect(response.status).toBe(401);
     expect(response.body.success).toBe(false);
@@ -315,8 +315,12 @@ describe('Answers API', () => {
 
   it('DELETE /api/answers/:answerId -> should return 403 when user is not the author or admin', async () => {
     const otherEmail = `other+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
-    const otherLogin = await request(app).post('/api/auth/login').send({ email: otherEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Other', email: otherEmail, password: 'password123', isAdmin: false });
+    const otherLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: otherEmail, password: 'password123' });
     const otherToken = otherLogin.body.data.token;
 
     const answer = await createAnswer({ author: mockUser._id });
@@ -335,8 +339,12 @@ describe('Answers API', () => {
 
   it('DELETE /api/answers/:answerId -> should allow an admin to delete any answer', async () => {
     const adminEmail = `admin+${Date.now()}@example.com`;
-    await request(app).post('/api/auth/register').send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
-    const adminLogin = await request(app).post('/api/auth/login').send({ email: adminEmail, password: 'password123' });
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Admin', email: adminEmail, password: 'password123', isAdmin: true });
+    const adminLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: adminEmail, password: 'password123' });
     const adminToken = adminLogin.body.data.token;
 
     const answer = await createAnswer({ author: mockUser._id });

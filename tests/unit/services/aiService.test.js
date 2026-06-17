@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { improveQuestionService, summarizeAnswersService } from '../../../src/services/aiService.js';
+import {
+  improveQuestionService,
+  summarizeAnswersService,
+} from '../../../src/services/aiService.js';
 import { GoogleGenAI } from '@google/genai';
 
 // Mock the @google/genai module

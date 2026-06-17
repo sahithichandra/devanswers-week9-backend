@@ -37,9 +37,7 @@ describe('Auth API', () => {
       isAdmin: false,
     };
 
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send(userData);
+    const response = await request(app).post('/api/auth/register').send(userData);
 
     expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
@@ -66,9 +64,7 @@ describe('Auth API', () => {
       isAdmin: true,
     };
 
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send(adminData);
+    const response = await request(app).post('/api/auth/register').send(adminData);
 
     expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
@@ -81,14 +77,12 @@ describe('Auth API', () => {
     const email = 'existing@example.com';
     await createUser({ email });
 
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Another User',
-        email: email,
-        password: 'password123',
-        isAdmin: false,
-      });
+    const response = await request(app).post('/api/auth/register').send({
+      name: 'Another User',
+      email: email,
+      password: 'password123',
+      isAdmin: false,
+    });
 
     expect(response.status).toBe(409);
     expect(response.body.success).toBe(false);
@@ -96,12 +90,10 @@ describe('Auth API', () => {
   });
 
   it('POST /api/auth/register -> should handle missing required fields', async () => {
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Test User',
-        // Missing email and password
-      });
+    const response = await request(app).post('/api/auth/register').send({
+      name: 'Test User',
+      // Missing email and password
+    });
 
     expect(response.status).toBeGreaterThanOrEqual(400);
     expect(response.body.success).toBe(false);
@@ -114,9 +106,7 @@ describe('Auth API', () => {
       password: 'password123',
     };
 
-    const response = await request(app)
-      .post('/api/auth/register')
-      .send(userData);
+    const response = await request(app).post('/api/auth/register').send(userData);
 
     expect(response.status).toBe(201);
 
@@ -134,12 +124,10 @@ describe('Auth API', () => {
       password: await bcrypt.hash(password, 10),
     });
 
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'user@example.com',
-        password: password,
-      });
+    const response = await request(app).post('/api/auth/login').send({
+      email: 'user@example.com',
+      password: password,
+    });
 
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
@@ -162,12 +150,10 @@ describe('Auth API', () => {
       isAdmin: true,
     });
 
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'admin@example.com',
-        password: password,
-      });
+    const response = await request(app).post('/api/auth/login').send({
+      email: 'admin@example.com',
+      password: password,
+    });
 
     expect(response.status).toBe(200);
 
@@ -177,12 +163,10 @@ describe('Auth API', () => {
   });
 
   it('POST /api/auth/login -> should return 400 for non-existent user', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'nonexistent@example.com',
-        password: 'password123',
-      });
+    const response = await request(app).post('/api/auth/login').send({
+      email: 'nonexistent@example.com',
+      password: 'password123',
+    });
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -195,12 +179,10 @@ describe('Auth API', () => {
       password: await bcrypt.hash('correctpassword', 10),
     });
 
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'user@example.com',
-        password: 'wrongpassword',
-      });
+    const response = await request(app).post('/api/auth/login').send({
+      email: 'user@example.com',
+      password: 'wrongpassword',
+    });
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -213,41 +195,33 @@ describe('Auth API', () => {
       password: await bcrypt.hash('password123', 10),
     });
 
-    const response1 = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'wrong@example.com',
-        password: 'password123',
-      });
+    const response1 = await request(app).post('/api/auth/login').send({
+      email: 'wrong@example.com',
+      password: 'password123',
+    });
 
-    const response2 = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'user@example.com',
-        password: 'wrongpassword',
-      });
+    const response2 = await request(app).post('/api/auth/login').send({
+      email: 'user@example.com',
+      password: 'wrongpassword',
+    });
 
     // Both should return same error message
     expect(response1.body.message).toBe(response2.body.message);
   });
 
   it('POST /api/auth/login -> should handle missing email', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        password: 'password123',
-      });
+    const response = await request(app).post('/api/auth/login').send({
+      password: 'password123',
+    });
 
     expect(response.status).toBeGreaterThanOrEqual(400);
     expect(response.body.success).toBe(false);
   });
 
   it('POST /api/auth/login -> should handle missing password', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'user@example.com',
-      });
+    const response = await request(app).post('/api/auth/login').send({
+      email: 'user@example.com',
+    });
 
     expect(response.status).toBeGreaterThanOrEqual(400);
     expect(response.body.success).toBe(false);
@@ -260,12 +234,10 @@ describe('Auth API', () => {
       password: await bcrypt.hash(password, 10),
     });
 
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'user@example.com',
-        password: password,
-      });
+    const response = await request(app).post('/api/auth/login').send({
+      email: 'user@example.com',
+      password: password,
+    });
 
     expect(response.status).toBe(200);
 

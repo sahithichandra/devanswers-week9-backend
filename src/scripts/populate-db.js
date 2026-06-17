@@ -34,7 +34,7 @@ async function clearExistingData() {
   } catch (error) {
     console.error('Error clearing existing data:', error);
     throw error;
-  } 
+  }
 }
 
 // Create tags in the database
@@ -52,10 +52,12 @@ async function createTags(tags) {
 // Create users in the database
 async function createUsers(users) {
   try {
-    const hashedUsers = await Promise.all(users.map(async user => ({
-      ...user,
-      password: await bcrypt.hash(user.password, 10)
-    })));
+    const hashedUsers = await Promise.all(
+      users.map(async (user) => ({
+        ...user,
+        password: await bcrypt.hash(user.password, 10),
+      }))
+    );
     const createdUsers = await User.insertMany(hashedUsers);
     console.log(`Created ${createdUsers.length} users`);
     return createdUsers;
@@ -68,7 +70,7 @@ async function createUsers(users) {
 // Create questions in the database
 async function createQuestions(questions) {
   try {
-    const completedQuestions = questions.map(q => ({
+    const completedQuestions = questions.map((q) => ({
       ...q,
       voteCount: q.upvotes.length - q.downvotes.length,
     }));
@@ -84,7 +86,7 @@ async function createQuestions(questions) {
 // Create answers in the database
 async function createAnswers(answers) {
   try {
-    const completedAnswers = answers.map(a => ({
+    const completedAnswers = answers.map((a) => ({
       ...a,
       voteCount: a.upvotes.length - a.downvotes.length,
     }));
@@ -102,7 +104,7 @@ async function seedDatabase() {
   try {
     await connectToDatabase();
     await clearExistingData();
-    
+
     await createTags(tags);
     await createUsers(users);
     await createQuestions(questions);

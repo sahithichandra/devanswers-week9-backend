@@ -66,8 +66,8 @@ describe('Tags API', () => {
     expect(response.body.message).toBe('Tags fetched successfully');
     expect(response.body.data).toHaveLength(2);
 
-    const jsTag = response.body.data.find(t => t.name === 'javascript');
-    const nodeTag = response.body.data.find(t => t.name === 'nodejs');
+    const jsTag = response.body.data.find((t) => t.name === 'javascript');
+    const nodeTag = response.body.data.find((t) => t.name === 'nodejs');
     expect(jsTag.questionCount).toBe(2);
     expect(nodeTag.questionCount).toBe(1);
   });

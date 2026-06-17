@@ -1,13 +1,12 @@
-import mongoose from "mongoose";
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { createAppError } from "../utils/createAppError.js";
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { createAppError } from '../utils/createAppError.js';
 
 export const register = async (name, email, password, isAdmin) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw createAppError('User already exists', 409); 
+    throw createAppError('User already exists', 409);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,12 +25,12 @@ export const login = async (email, password) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw createAppError("Invalid email or password", 400);
+    throw createAppError('Invalid email or password', 400);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw createAppError("Invalid email or password", 400);
+    throw createAppError('Invalid email or password', 400);
   }
 
   const token = jwt.sign(

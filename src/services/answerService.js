@@ -6,12 +6,11 @@ export const getAnswersByQuestionIdService = async (questionId) => {
   const answers = await Answer.find({ questionId }).populate('author', 'name');
 
   if (!answers || answers.length === 0) {
-    throw createAppError("No answers found for this question", 404);
+    throw createAppError('No answers found for this question', 404);
   }
 
   return answers;
 };
-
 
 export const createAnswerService = async ({ questionId, answerText, author }) => {
   const newAnswer = new Answer({
@@ -38,10 +37,7 @@ export const updateAnswerService = async (answerId, answerText, loggedInUser) =>
     throw createAppError('Answer not found', 404);
   }
 
-  if (
-    answer.author.toString() !== loggedInUser.id.toString() &&
-    !loggedInUser.isAdmin
-  ) {
+  if (answer.author.toString() !== loggedInUser.id.toString() && !loggedInUser.isAdmin) {
     throw createAppError('Not authorized to update this answer', 403);
   }
 
@@ -55,13 +51,10 @@ export const deleteAnswerService = async (answerId, loggedInUser) => {
   const answer = await Answer.findById(answerId);
 
   if (!answer) {
-    throw createAppError("Answer not found", 404);
+    throw createAppError('Answer not found', 404);
   }
 
-  if (
-    answer.author.toString() !== loggedInUser.id.toString() &&
-    !loggedInUser.isAdmin
-  ) {
+  if (answer.author.toString() !== loggedInUser.id.toString() && !loggedInUser.isAdmin) {
     throw createAppError('Not authorized to delete this answer', 403);
   }
 
@@ -69,21 +62,20 @@ export const deleteAnswerService = async (answerId, loggedInUser) => {
 };
 
 export const upvoteAnswerService = async (answerId, userId) => {
-  const document = await handleVote(Answer, answerId, userId, "upvote");
+  const document = await handleVote(Answer, answerId, userId, 'upvote');
 
   if (!document) {
-    throw createAppError("Failed to upvote answer", 400);
+    throw createAppError('Failed to upvote answer', 400);
   }
 
   return document;
 };
 
-
 export const downvoteAnswerService = async (answerId, userId) => {
-  const document = await handleVote(Answer, answerId, userId, "downvote");
+  const document = await handleVote(Answer, answerId, userId, 'downvote');
 
   if (!document) {
-    throw createAppError("Failed to downvote answer", 400);
+    throw createAppError('Failed to downvote answer', 400);
   }
 
   return document;

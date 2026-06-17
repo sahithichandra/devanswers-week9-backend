@@ -4,8 +4,8 @@ import {
   updateAnswerService,
   deleteAnswerService,
   upvoteAnswerService,
-  downvoteAnswerService
-} from "../services/answerService.js";
+  downvoteAnswerService,
+} from '../services/answerService.js';
 
 export const getAnswersByQuestionId = async (req, res) => {
   const { questionId } = req.params;
@@ -13,7 +13,7 @@ export const getAnswersByQuestionId = async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Answers fetched successfully",
+    message: 'Answers fetched successfully',
     data: answers,
   });
 };
@@ -52,7 +52,7 @@ export const deleteAnswer = async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Answer deleted successfully",
+    message: 'Answer deleted successfully',
   });
 };
 
@@ -64,13 +64,13 @@ export const upvoteAnswer = async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Answer upvoted successfully",
+    message: 'Answer upvoted successfully',
     data: {
       _id: document._id,
       upvotes: document.upvotes,
       downvotes: document.downvotes,
       voteCount: document.voteCount,
-    }
+    },
   });
 };
 
@@ -82,12 +82,12 @@ export const downvoteAnswer = async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Answer downvoted successfully",
+    message: 'Answer downvoted successfully',
     data: {
       _id: document._id,
       upvotes: document.upvotes,
       downvotes: document.downvotes,
       voteCount: document.voteCount,
-    }
+    },
   });
 };

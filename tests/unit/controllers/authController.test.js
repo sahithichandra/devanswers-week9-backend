@@ -134,10 +134,7 @@ describe('authController', () => {
       await login(req, res);
 
       // Assert
-      expect(userService.login).toHaveBeenCalledWith(
-        req.body.email,
-        req.body.password
-      );
+      expect(userService.login).toHaveBeenCalledWith(req.body.email, req.body.password);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         success: true,

@@ -1,16 +1,13 @@
 export const handleVote = async (Model, id, userId, voteType) => {
   const document = await Model.findById(id);
   if (!document) {
-    throw new Error("Document not found");
+    throw new Error('Document not found');
   }
 
   const hasUpvoted = document.upvotes.includes(userId);
   const hasDownvoted = document.downvotes.includes(userId);
 
-  if (
-    (voteType === "upvote" && hasUpvoted) ||
-    (voteType === "downvote" && hasDownvoted)
-  ) {
+  if ((voteType === 'upvote' && hasUpvoted) || (voteType === 'downvote' && hasDownvoted)) {
     return document; // Do nothing, no change needed
   }
 
@@ -23,9 +20,9 @@ export const handleVote = async (Model, id, userId, voteType) => {
   }
 
   // Add new vote
-  if (voteType === "upvote") {
+  if (voteType === 'upvote') {
     document.upvotes.push(userId);
-  } else if (voteType === "downvote") {
+  } else if (voteType === 'downvote') {
     document.downvotes.push(userId);
   }
 

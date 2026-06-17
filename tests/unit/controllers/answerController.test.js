@@ -59,9 +59,9 @@ describe('answerController', () => {
     it('should propagate service errors', async () => {
       // Arrange
       req.params.questionId = 'question123';
-      answerService.getAnswersByQuestionIdService = vi.fn().mockRejectedValue(
-        new Error('No answers found')
-      );
+      answerService.getAnswersByQuestionIdService = vi
+        .fn()
+        .mockRejectedValue(new Error('No answers found'));
 
       // Act & Assert
       await expect(getAnswersByQuestionId(req, res)).rejects.toThrow('No answers found');
@@ -106,9 +106,9 @@ describe('answerController', () => {
       req.params.questionId = 'question123';
       req.body = { answerText: 'Answer without author' };
 
-      answerService.createAnswerService = vi.fn().mockRejectedValue(
-        new Error('Missing required fields')
-      );
+      answerService.createAnswerService = vi
+        .fn()
+        .mockRejectedValue(new Error('Missing required fields'));
 
       // Act & Assert
       await expect(createAnswer(req, res)).rejects.toThrow('Missing required fields');
@@ -231,9 +231,7 @@ describe('answerController', () => {
       // Arrange
       req.params.answerId = 'answer123';
 
-      answerService.upvoteAnswerService = vi.fn().mockRejectedValue(
-        new Error('Failed to upvote')
-      );
+      answerService.upvoteAnswerService = vi.fn().mockRejectedValue(new Error('Failed to upvote'));
 
       // Act & Assert
       await expect(upvoteAnswer(req, res)).rejects.toThrow('Failed to upvote');
@@ -277,9 +275,9 @@ describe('answerController', () => {
       // Arrange
       req.params.answerId = 'answer123';
 
-      answerService.downvoteAnswerService = vi.fn().mockRejectedValue(
-        new Error('Failed to downvote')
-      );
+      answerService.downvoteAnswerService = vi
+        .fn()
+        .mockRejectedValue(new Error('Failed to downvote'));
 
       // Act & Assert
       await expect(downvoteAnswer(req, res)).rejects.toThrow('Failed to downvote');

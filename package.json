@@ -6,7 +6,11 @@
     "test": "vitest run",
     "populate": "node src/scripts/populate-db.js",
     "start": "node main.js",
-    "dev": "nodemon main.js"
+    "dev": "nodemon main.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "type": "module",
   "keywords": [],
@@ -25,8 +29,12 @@
     "mongoose": "^8.14.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.5.0",
+    "globals": "^17.6.0",
     "mongodb-memory-server": "^11.0.1",
     "nodemon": "^3.1.10",
+    "prettier": "^3.8.4",
     "supertest": "^7.1.1",
     "vitest": "^3.2.3"
   }

@@ -58,9 +58,9 @@ describe('questionController', () => {
     // Failure case - service error
     it('should propagate service errors', async () => {
       // Arrange
-      questionService.getAllQuestionsService = vi.fn().mockRejectedValue(
-        new Error('Database error')
-      );
+      questionService.getAllQuestionsService = vi
+        .fn()
+        .mockRejectedValue(new Error('Database error'));
 
       // Act & Assert
       await expect(getAllQuestions(req, res)).rejects.toThrow('Database error');
@@ -138,9 +138,9 @@ describe('questionController', () => {
       // Arrange
       req.body = { title: 'Incomplete Question' };
 
-      questionService.createQuestionService = vi.fn().mockRejectedValue(
-        new Error('Missing required fields')
-      );
+      questionService.createQuestionService = vi
+        .fn()
+        .mockRejectedValue(new Error('Missing required fields'));
 
       // Act & Assert
       await expect(createQuestion(req, res)).rejects.toThrow('Missing required fields');
@@ -301,9 +301,9 @@ describe('questionController', () => {
       // Arrange
       req.params.id = '1';
 
-      questionService.upvoteQuestionService = vi.fn().mockRejectedValue(
-        new Error('Failed to upvote')
-      );
+      questionService.upvoteQuestionService = vi
+        .fn()
+        .mockRejectedValue(new Error('Failed to upvote'));
 
       // Act & Assert
       await expect(upvoteQuestion(req, res)).rejects.toThrow('Failed to upvote');
@@ -345,9 +345,9 @@ describe('questionController', () => {
       // Arrange
       req.params.id = '1';
 
-      questionService.downvoteQuestionService = vi.fn().mockRejectedValue(
-        new Error('Failed to downvote')
-      );
+      questionService.downvoteQuestionService = vi
+        .fn()
+        .mockRejectedValue(new Error('Failed to downvote'));
 
       // Act & Assert
       await expect(downvoteQuestion(req, res)).rejects.toThrow('Failed to downvote');

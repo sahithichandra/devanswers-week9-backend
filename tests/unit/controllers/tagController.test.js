@@ -30,8 +30,16 @@ describe('tagController', () => {
     it('should return all tags with question count', async () => {
       // Arrange
       const mockTags = [
-        { _id: 'tag1', name: 'javascript', toObject: vi.fn().mockReturnValue({ _id: 'tag1', name: 'javascript' }) },
-        { _id: 'tag2', name: 'nodejs', toObject: vi.fn().mockReturnValue({ _id: 'tag2', name: 'nodejs' }) },
+        {
+          _id: 'tag1',
+          name: 'javascript',
+          toObject: vi.fn().mockReturnValue({ _id: 'tag1', name: 'javascript' }),
+        },
+        {
+          _id: 'tag2',
+          name: 'nodejs',
+          toObject: vi.fn().mockReturnValue({ _id: 'tag2', name: 'nodejs' }),
+        },
       ];
 
       Tag.find = vi.fn().mockResolvedValue(mockTags);
@@ -47,9 +55,7 @@ describe('tagController', () => {
       expect(res.json).toHaveBeenCalledWith({
         success: true,
         message: 'Tags fetched successfully',
-        data: expect.arrayContaining([
-          expect.objectContaining({ questionCount: 3 }),
-        ]),
+        data: expect.arrayContaining([expect.objectContaining({ questionCount: 3 })]),
       });
     });
 
@@ -120,9 +126,7 @@ describe('tagController', () => {
       expect(res.json).toHaveBeenCalledWith({
         success: true,
         message: 'Questions fetched successfully',
-        data: expect.arrayContaining([
-          expect.objectContaining({ answerCount: 2 }),
-        ]),
+        data: expect.arrayContaining([expect.objectContaining({ answerCount: 2 })]),
       });
     });
 

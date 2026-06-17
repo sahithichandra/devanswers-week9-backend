@@ -162,9 +162,9 @@ describe('voteService', () => {
       MockModel = { findById: vi.fn().mockResolvedValue(null) };
 
       // Act & Assert
-      await expect(
-        handleVote(MockModel, 'nonexistent', 'user123', 'upvote')
-      ).rejects.toThrow('Document not found');
+      await expect(handleVote(MockModel, 'nonexistent', 'user123', 'upvote')).rejects.toThrow(
+        'Document not found'
+      );
     });
 
     // Edge case - multiple users voting
@@ -195,9 +195,9 @@ describe('voteService', () => {
       MockModel = { findById: vi.fn().mockRejectedValue(new Error('Database error')) };
 
       // Act & Assert
-      await expect(
-        handleVote(MockModel, 'doc123', 'user123', 'upvote')
-      ).rejects.toThrow('Database error');
+      await expect(handleVote(MockModel, 'doc123', 'user123', 'upvote')).rejects.toThrow(
+        'Database error'
+      );
     });
 
     // Edge case - vote count calculation with mixed votes

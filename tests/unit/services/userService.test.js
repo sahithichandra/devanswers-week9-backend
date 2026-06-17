@@ -75,7 +75,12 @@ describe('userService', () => {
     // Success case - admin user
     it('should register an admin user', async () => {
       // Arrange
-      const mockAdminObj = { _id: 'admin123', name: 'Admin User', email: 'admin@example.com', isAdmin: true };
+      const mockAdminObj = {
+        _id: 'admin123',
+        name: 'Admin User',
+        email: 'admin@example.com',
+        isAdmin: true,
+      };
       User.findOne = vi.fn().mockResolvedValue(null);
       User.create = vi.fn().mockResolvedValue({
         ...mockAdminObj,
@@ -86,9 +91,7 @@ describe('userService', () => {
       const result = await register('Admin User', 'admin@example.com', 'adminpass', true);
 
       // Assert
-      expect(User.create).toHaveBeenCalledWith(
-        expect.objectContaining({ isAdmin: true })
-      );
+      expect(User.create).toHaveBeenCalledWith(expect.objectContaining({ isAdmin: true }));
       expect(result.isAdmin).toBe(true);
     });
 
@@ -133,9 +136,9 @@ describe('userService', () => {
       User.create = vi.fn().mockRejectedValue(new Error('Database error'));
 
       // Act & Assert
-      await expect(
-        register('John Doe', 'john@example.com', 'password123', false)
-      ).rejects.toThrow('Database error');
+      await expect(register('John Doe', 'john@example.com', 'password123', false)).rejects.toThrow(
+        'Database error'
+      );
     });
   });
 
@@ -193,12 +196,12 @@ describe('userService', () => {
       User.findOne = vi.fn().mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        login('nonexistent@example.com', 'password123')
-      ).rejects.toThrow('Invalid email or password');
-      await expect(
-        login('nonexistent@example.com', 'password123')
-      ).rejects.toMatchObject({ statusCode: 400 });
+      await expect(login('nonexistent@example.com', 'password123')).rejects.toThrow(
+        'Invalid email or password'
+      );
+      await expect(login('nonexistent@example.com', 'password123')).rejects.toMatchObject({
+        statusCode: 400,
+      });
     });
 
     // Client error - wrong password
@@ -213,12 +216,12 @@ describe('userService', () => {
       User.findOne = vi.fn().mockResolvedValue(mockUser);
 
       // Act & Assert
-      await expect(
-        login('john@example.com', 'wrongPassword')
-      ).rejects.toThrow('Invalid email or password');
-      await expect(
-        login('john@example.com', 'wrongPassword')
-      ).rejects.toMatchObject({ statusCode: 400 });
+      await expect(login('john@example.com', 'wrongPassword')).rejects.toThrow(
+        'Invalid email or password'
+      );
+      await expect(login('john@example.com', 'wrongPassword')).rejects.toMatchObject({
+        statusCode: 400,
+      });
     });
 
     // Edge case - token expiration
@@ -248,9 +251,9 @@ describe('userService', () => {
       User.findOne = vi.fn().mockRejectedValue(new Error('Database connection failed'));
 
       // Act & Assert
-      await expect(
-        login('john@example.com', 'password123')
-      ).rejects.toThrow('Database connection failed');
+      await expect(login('john@example.com', 'password123')).rejects.toThrow(
+        'Database connection failed'
+      );
     });
   });
 });
